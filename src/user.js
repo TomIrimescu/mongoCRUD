@@ -25,6 +25,14 @@ UserSchema.virtual("postCount").get(function() {
   return this.posts.length;
 });
 
+UserSchema.pre("remove", function(next) {
+  const BlogPost = mongoose.model("blogPost");
+  // this === joe -the reason for not using arrow function
+  // this -is a reference to an instance of a user
+
+  BlogPost.remove({ _id: { $in: this.blogPosts } }).then(() => next());
+});
+
 const User = mongoose.model("user", UserSchema); // User class or User model
 
 module.exports = User;
